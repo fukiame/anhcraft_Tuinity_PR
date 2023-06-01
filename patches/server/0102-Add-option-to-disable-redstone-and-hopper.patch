@@ -1,0 +1,205 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 13:08:03 +0700
+Subject: [PATCH] Add option to disable redstone and hopper
+
+
+diff --git a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+index 79acb3fbca1abc6260d18ee40f7abb9efd14968b..47e8538e613e227af17dfddb3c846f8abbbcb520 100644
+--- a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
++++ b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+@@ -232,6 +232,18 @@ public final class TuinityConfig {
+         }
+     }
+ 
++    public static boolean disableRedstone;
++
++    private static void disableRedstone() {
++        disableRedstone = TuinityConfig.getBoolean("disable-redstone", true);
++    }
++
++    public static boolean disableHopper;
++
++    private static void disableHopper() {
++        disableHopper = TuinityConfig.getBoolean("disable-hopper", true);
++    }
++
+     public static boolean useNewLightEngine;
+ 
+     private static void useNewLightEngine() {
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockMinecartDetector.java b/src/main/java/net/minecraft/world/level/block/BlockMinecartDetector.java
+index 5bff21c47c608eeddf564270ba433f83ccaea1ea..38f3af38740e847c135004353d0da54815bc4c38 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockMinecartDetector.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockMinecartDetector.java
+@@ -5,6 +5,8 @@ import java.util.List;
+ import java.util.Random;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.server.level.WorldServer;
+@@ -55,6 +57,7 @@ public class BlockMinecartDetector extends BlockMinecartTrackAbstract {
+ 
+     @Override
+     public void tickAlways(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, Random random) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         if ((Boolean) iblockdata.get(BlockMinecartDetector.POWERED)) {
+             this.a((World) worldserver, blockposition, iblockdata);
+         }
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockPressurePlateAbstract.java b/src/main/java/net/minecraft/world/level/block/BlockPressurePlateAbstract.java
+index 4fc3cf7c255a183f3da19fd91c13cd5e3c0550b6..b50954cd65eadfc9cf05b0358af8574c1705724f 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockPressurePlateAbstract.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockPressurePlateAbstract.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.world.level.block;
+ 
+ import java.util.Random;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.server.level.WorldServer;
+@@ -56,6 +58,7 @@ public abstract class BlockPressurePlateAbstract extends Block {
+ 
+     @Override
+     public void tickAlways(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, Random random) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         int i = this.getPower(iblockdata);
+ 
+         if (i > 0) {
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockRedstoneLamp.java b/src/main/java/net/minecraft/world/level/block/BlockRedstoneLamp.java
+index ed3227b18b79d396758c012be8484628ca630666..ee769c7a473b94a4e19159d29816e2be50a3e3f4 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockRedstoneLamp.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockRedstoneLamp.java
+@@ -2,6 +2,8 @@ package net.minecraft.world.level.block;
+ 
+ import java.util.Random;
+ import javax.annotation.Nullable;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.server.level.WorldServer;
+ import net.minecraft.world.item.context.BlockActionContext;
+@@ -52,6 +54,7 @@ public class BlockRedstoneLamp extends Block {
+ 
+     @Override
+     public void tickAlways(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, Random random) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         if ((Boolean) iblockdata.get(BlockRedstoneLamp.a) && !worldserver.isBlockIndirectlyPowered(blockposition)) {
+             // CraftBukkit start
+             if (CraftEventFactory.callRedstoneChange(worldserver, blockposition, 15, 0).getNewCurrent() != 0) {
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockRedstoneWire.java b/src/main/java/net/minecraft/world/level/block/BlockRedstoneWire.java
+index 71ba55d36f5bc8a417930015c31553b30cf3e8dd..d6750862912831f020017c25b48433e03efc16a9 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockRedstoneWire.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockRedstoneWire.java
+@@ -11,6 +11,8 @@ import java.util.Iterator;
+ import java.util.Map;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BaseBlockPosition;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+@@ -249,6 +251,7 @@ public class BlockRedstoneWire extends Block {
+      * Note: Added 'source' argument so as to help determine direction of information flow
+      */
+     private void updateSurroundingRedstone(World worldIn, BlockPosition pos, IBlockData state, BlockPosition source) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         if (worldIn.paperConfig.useEigencraftRedstone) {
+             turbo.updateSurroundingRedstone(worldIn, pos, state, source);
+             return;
+@@ -265,6 +268,7 @@ public class BlockRedstoneWire extends Block {
+      * Note:  Made this public so that RedstoneWireTurbo can access it.
+      */
+     public IBlockData calculateCurrentChanges(World worldIn, BlockPosition pos1, BlockPosition pos2, IBlockData state) {
++        if (TuinityConfig.disableRedstone) return state; // Tuinity
+         IBlockData iblockstate = state;
+         int i = state.get(POWER);
+         int j = 0;
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockTripwire.java b/src/main/java/net/minecraft/world/level/block/BlockTripwire.java
+index 46a4dd932d84bf72c1837e36add56f219d6b5e77..54280f27f1c785cac902484d0a36df169d6ececa 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockTripwire.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockTripwire.java
+@@ -4,6 +4,8 @@ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.server.level.WorldServer;
+@@ -129,6 +131,7 @@ public class BlockTripwire extends Block {
+ 
+     @Override
+     public void tickAlways(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, Random random) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         if ((Boolean) worldserver.getType(blockposition).get(BlockTripwire.POWERED)) {
+             this.a((World) worldserver, blockposition);
+         }
+diff --git a/src/main/java/net/minecraft/world/level/block/BlockTripwireHook.java b/src/main/java/net/minecraft/world/level/block/BlockTripwireHook.java
+index 5e3cf96b813d2871adf7a7f870af6c6a5dd878c1..1eb13cfc017ecf499cb66444194e82b9a87e0cee 100644
+--- a/src/main/java/net/minecraft/world/level/block/BlockTripwireHook.java
++++ b/src/main/java/net/minecraft/world/level/block/BlockTripwireHook.java
+@@ -3,6 +3,8 @@ package net.minecraft.world.level.block;
+ import com.google.common.base.MoreObjects;
+ import java.util.Random;
+ import javax.annotation.Nullable;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.server.level.WorldServer;
+@@ -195,6 +197,7 @@ public class BlockTripwireHook extends Block {
+ 
+     @Override
+     public void tickAlways(IBlockData iblockdata, WorldServer worldserver, BlockPosition blockposition, Random random) {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         this.a(worldserver, blockposition, iblockdata, false, true, -1, (IBlockData) null);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/world/level/block/entity/TileEntityHopper.java b/src/main/java/net/minecraft/world/level/block/entity/TileEntityHopper.java
+index 537dc52e5ff3325555ee6049bc7f277952983b76..0ef7100731e044f1f13b544b1f70843ba437f57c 100644
+--- a/src/main/java/net/minecraft/world/level/block/entity/TileEntityHopper.java
++++ b/src/main/java/net/minecraft/world/level/block/entity/TileEntityHopper.java
+@@ -6,6 +6,8 @@ import java.util.function.Supplier;
+ import java.util.stream.Collectors;
+ import java.util.stream.IntStream;
+ import javax.annotation.Nullable;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.core.NonNullList;
+@@ -136,6 +138,7 @@ public class TileEntityHopper extends TileEntityLootable implements IHopper, ITi
+ 
+     @Override
+     public void tick() {
++        if (TuinityConfig.disableHopper) return; // Tuinity
+         if (this.world != null && !this.world.isClientSide) {
+             --this.j;
+             this.k = this.world.getTime();
+diff --git a/src/main/java/net/minecraft/world/level/block/piston/TileEntityPiston.java b/src/main/java/net/minecraft/world/level/block/piston/TileEntityPiston.java
+index 58c7a52612fe0f5c1e4ddacc0bf93cd81f1286b8..c01179a28abfcd475fe339104475060fcdc12fbb 100644
+--- a/src/main/java/net/minecraft/world/level/block/piston/TileEntityPiston.java
++++ b/src/main/java/net/minecraft/world/level/block/piston/TileEntityPiston.java
+@@ -2,6 +2,8 @@ package net.minecraft.world.level.block.piston;
+ 
+ import java.util.Iterator;
+ import java.util.List;
++
++import com.tuinity.tuinity.config.TuinityConfig;
+ import net.minecraft.core.BlockPosition;
+ import net.minecraft.core.EnumDirection;
+ import net.minecraft.nbt.GameProfileSerializer;
+@@ -269,6 +271,7 @@ public class TileEntityPiston extends TileEntity implements ITickable {
+ 
+     @Override
+     public void tick() {
++        if (TuinityConfig.disableRedstone) return; // Tuinity
+         this.k = this.world.getTime();
+         this.j = this.i;
+         if (this.j >= 1.0F) {
