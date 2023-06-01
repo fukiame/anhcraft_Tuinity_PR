@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 09:55:58 +0700
+Subject: [PATCH] Backport: Fix setPatternColor on tropical fish bucket meta
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaTropicalFishBucket.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaTropicalFishBucket.java
+index 7b7e4907cd197e16ea5851b91d9b975658d2dbf3..2ddf21a5694c1a3787ca7a4055061ab101317783 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaTropicalFishBucket.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaTropicalFishBucket.java
+@@ -113,7 +113,7 @@ class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishB
+         if (variant == null) {
+             variant = 0;
+         }
+-        variant = CraftTropicalFish.getData(color, getPatternColor(), getPattern());
++        variant = CraftTropicalFish.getData(color, getBodyColor(), getPattern());
+     }
+ 
+     @Override
