@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 08:32:05 +0700
+Subject: [PATCH] Backport: Don't fire entitymovevent for players
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/EntityLiving.java b/src/main/java/net/minecraft/world/entity/EntityLiving.java
+index 2ff3297fb8c0e4f8c969ba2727eecb7fe06525c4..a11292f55b373226a39f4ea5b32cbe9eca2ba7d3 100644
+--- a/src/main/java/net/minecraft/world/entity/EntityLiving.java
++++ b/src/main/java/net/minecraft/world/entity/EntityLiving.java
+@@ -2914,7 +2914,7 @@ public abstract class EntityLiving extends Entity {
+         this.collideNearby();
+         this.world.getMethodProfiler().exit();
+         // Paper start
+-        if (((WorldServer) world).hasEntityMoveEvent) {
++        if (((WorldServer) world).hasEntityMoveEvent && !(this instanceof net.minecraft.world.entity.player.EntityHuman)) {
+             if (lastX != locX() || lastY != locY() || lastZ != locZ() || lastYaw != yaw || lastPitch != pitch) {
+                 Location from = new Location(world.getWorld(), lastX, lastY, lastZ, lastYaw, lastPitch);
+                 Location to = new Location (world.getWorld(), locX(), locY(), locZ(), yaw, pitch);
