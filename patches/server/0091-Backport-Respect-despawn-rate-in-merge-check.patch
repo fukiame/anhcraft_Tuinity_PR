@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 08:41:01 +0700
+Subject: [PATCH] Backport: Respect despawn rate in merge check
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/item/EntityItem.java b/src/main/java/net/minecraft/world/entity/item/EntityItem.java
+index 077990f1d95ded2c8b89c38978ec25a56df3a984..cfc84f15bd114f63b98df9b905fffc521cc87e06 100644
+--- a/src/main/java/net/minecraft/world/entity/item/EntityItem.java
++++ b/src/main/java/net/minecraft/world/entity/item/EntityItem.java
+@@ -249,7 +249,7 @@ public class EntityItem extends Entity {
+     private boolean z() {
+         ItemStack itemstack = this.getItemStack();
+ 
+-        return this.isAlive() && this.pickupDelay != 32767 && this.age != -32768 && this.age < 6000 && itemstack.getCount() < itemstack.getMaxStackSize();
++        return this.isAlive() && this.pickupDelay != 32767 && this.age != -32768 && this.age < this.getDespawnRate() && itemstack.getCount() < itemstack.getMaxStackSize(); // Paper - respect despawn rate in pickup check.
+     }
+ 
+     private void a(EntityItem entityitem) {
