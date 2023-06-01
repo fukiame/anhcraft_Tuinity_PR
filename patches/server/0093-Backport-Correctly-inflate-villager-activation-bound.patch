@@ -1,0 +1,19 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 09:35:45 +0700
+Subject: [PATCH] Backport: Correctly inflate villager activation bounding box
+
+
+diff --git a/src/main/java/org/spigotmc/ActivationRange.java b/src/main/java/org/spigotmc/ActivationRange.java
+index 5c2eaca0bc63c7880ee928aba6a24761737aa649..9b3c3f3a3cc5ea292e13495c0113fa1f4cbf26b0 100644
+--- a/src/main/java/org/spigotmc/ActivationRange.java
++++ b/src/main/java/org/spigotmc/ActivationRange.java
+@@ -212,7 +212,7 @@ public class ActivationRange
+             // Paper start
+             ActivationType.WATER.boundingBox = player.getBoundingBox().grow( waterActivationRange, 256, waterActivationRange );
+             ActivationType.FLYING_MONSTER.boundingBox = player.getBoundingBox().grow( flyingActivationRange, 256, flyingActivationRange );
+-            ActivationType.VILLAGER.boundingBox = player.getBoundingBox().grow( villagerActivationRange, 256, waterActivationRange );
++            ActivationType.VILLAGER.boundingBox = player.getBoundingBox().grow( villagerActivationRange, 256, villagerActivationRange );
+             // Paper end
+ 
+             int i = MathHelper.floor( maxBB.minX / 16.0D );
