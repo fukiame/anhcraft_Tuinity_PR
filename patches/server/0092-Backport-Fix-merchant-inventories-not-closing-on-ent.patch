@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: anhcraft <huynhduyanh123123@gmail.com>
+Date: Thu, 1 Jun 2023 09:32:15 +0700
+Subject: [PATCH] Backport: Fix merchant inventories not closing on entity
+ removal
+
+
+diff --git a/src/main/java/net/minecraft/server/level/WorldServer.java b/src/main/java/net/minecraft/server/level/WorldServer.java
+index 6fc215df5ed3aa6ef0c23a57e8444602ff9309e8..1d86bffa8db7922313c9661e0c99e85520aa13da 100644
+--- a/src/main/java/net/minecraft/server/level/WorldServer.java
++++ b/src/main/java/net/minecraft/server/level/WorldServer.java
+@@ -2034,6 +2034,13 @@ public class WorldServer extends World implements GeneratorAccessSeed {
+         // Spigot end
+         // Spigot Start
+         if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder) {
++            // Paper start
++            if (entity.getBukkitEntity() instanceof org.bukkit.inventory.Merchant) {
++                org.bukkit.inventory.Merchant merchant = (org.bukkit.inventory.Merchant) entity.getBukkitEntity();
++                if (merchant.getTrader() != null)
++                    merchant.getTrader().closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED);
++            }
++            // Paper end
+             for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) entity.getBukkitEntity()).getInventory().getViewers())) {
+                 h.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.UNLOADED); // Paper
+             }
